@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-size: 14px;
+  background: transparent;
+}
+
+body {
+  background: rgba(0,0,0,0.6);
+  @apply text-white;
+}
+
+html {
+  background: transparent;
+}
+
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  @apply dark:bg-white/10;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-black/10 dark:bg-white/30
+}
+
+@keyframes marqueeScroll {
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}

@@ -1,5 +1,5 @@
 [package]
-name = "gleam"
+name = "gaze"
 version = "0.0.0"
 description = "A Tauri App"
 authors = ["vin"]
@@ -11,7 +11,8 @@ edition = "2021"
 tauri-build = { version = "1", features = [] }
 
 [dependencies]
-tauri = { version = "1", features = [ "window-all",
+tauri = { version = "1", features = [
+  "window-all",
   "shell-open",
   "global-shortcut",
 ] }

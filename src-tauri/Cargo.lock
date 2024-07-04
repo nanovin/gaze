@@ -1048,6 +1048,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "gaze"
+version = "0.0.0"
+dependencies = [
+ "auto-launch",
+ "device_query",
+ "global-hotkey",
+ "image 0.25.1",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "winapi",
+ "window-vibrancy",
+ "xcap",
+]
+
+[[package]]
 name = "gdk"
 version = "0.15.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1222,23 +1239,6 @@ dependencies = [
  "libc",
  "system-deps 6.2.2",
  "winapi",
-]
-
-[[package]]
-name = "gleam"
-version = "0.0.0"
-dependencies = [
- "auto-launch",
- "device_query",
- "global-hotkey",
- "image 0.25.1",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "winapi",
- "window-vibrancy",
- "xcap",
 ]
 
 [[package]]

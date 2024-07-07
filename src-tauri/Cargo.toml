@@ -25,6 +25,15 @@ image = "0.25.1"
 winapi = { version = "0.3.9", features = ["winuser"] }
 xcap = "0.0.10"
 global-hotkey = "0.5.4"
+fastembed = "3.7.0"
+faiss = "0.12.1"
+rusty-tesseract = "1.1.10"
+tokio = { version = "1.38.0", features = ["full"] }
+rand = "0.8.5"
+lancedb = "0.6.0"
+arrow = "51.0"
+arrow-array = "51.0"
+arrow-schema = "51.0"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

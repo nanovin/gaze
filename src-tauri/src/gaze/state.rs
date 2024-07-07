@@ -9,6 +9,3 @@ pub struct Gaze {
 }
 
 pub type GazeState = Arc<Mutex<Gaze>>;
-
-unsafe impl Send for Gaze {}
-unsafe impl Sync for Gaze {}

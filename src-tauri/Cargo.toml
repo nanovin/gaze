@@ -34,6 +34,9 @@ lancedb = "0.6.0"
 arrow = "51.0"
 arrow-array = "51.0"
 arrow-schema = "51.0"
+candle-core = "0.6.0"
+imageproc = "0.25.0"
+futures = "0.3.30"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

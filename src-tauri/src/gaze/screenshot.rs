@@ -3,7 +3,7 @@ use std::time::{Duration, Instant};
 use tokio::task::spawn_blocking;
 use xcap::{Monitor, Window};
 
-const SCREENSHOT_INTERVAL: u64 = 5; // seconds
+const SCREENSHOT_INTERVAL: u64 = 90; // seconds
 
 async fn screenshot_task(app_state: GazeState) {
     loop {

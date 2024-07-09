@@ -1,4 +1,5 @@
 use fastembed::{EmbeddingModel, InitOptions, TextEmbedding};
+use tokio::task::spawn_blocking;
 
 pub fn embed_text(text: &str) -> Result<Vec<f32>, Box<dyn std::error::Error>> {
     // With custom InitOptions
@@ -11,4 +12,8 @@ pub fn embed_text(text: &str) -> Result<Vec<f32>, Box<dyn std::error::Error>> {
         Ok(embeddings) => Ok(embeddings[0].clone()),
         Err(e) => Err(e.into()),
     }
+}
+
+pub async fn async_embed_text(text: String) -> Result<Vec<f32>, Box<dyn std::error::Error>> {
+    Ok(spawn_blocking(move || embed_text(text.as_str()).unwrap()).await?)
 }

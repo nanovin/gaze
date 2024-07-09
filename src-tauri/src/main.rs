@@ -6,5 +6,5 @@ mod gaze;
 #[tokio::main]
 async fn main() {
     tauri::async_runtime::set(tokio::runtime::Handle::current());
-    gaze::init_search().await;
+    gaze::init_gaze().await;
 }

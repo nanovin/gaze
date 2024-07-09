@@ -12,17 +12,13 @@ pub mod embed;
 pub mod keybinds;
 pub mod ocr;
 pub mod screenshot;
+pub mod search;
 pub mod state;
 pub mod utils;
 pub mod vdb;
 pub mod window_appearance;
 
-// #[tauri::command]
-// async fn command_name(state: tauri::State<'_, GazeAppState>) -> Result<(), String> {
-//     Ok(())
-// }
-
-pub async fn init_search() {
+pub async fn init_gaze() {
     let app_state: GazeState = Arc::new(Mutex::new(Gaze::default()));
 
     init_vdb(app_state.clone()).await;
@@ -36,7 +32,10 @@ pub async fn init_search() {
             Ok(())
         })
         .manage(app_state)
-        // .invoke_handler(tauri::generate_handler![command_name])
+        .invoke_handler(tauri::generate_handler![
+            search::vector_search,
+            search::get_rows
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

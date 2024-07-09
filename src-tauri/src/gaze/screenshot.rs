@@ -1,10 +1,16 @@
-use super::{embed::embed_text, ocr::image_to_text, state::GazeState};
+use super::{
+    embed::embed_text,
+    imghash::{hdist, phash},
+    ocr::image_to_text,
+    state::{Gaze, GazeState},
+};
 use image::DynamicImage;
 use std::time::{Duration, Instant};
 use tokio::task::spawn_blocking;
 use xcap::{Monitor, Window};
 
 const SCREENSHOT_INTERVAL: u64 = 90; // seconds
+const PHASH_DIST_THRESHOLD: usize = 10;
 
 // an future that sits in the event loop and calls take_screenshot
 // every SCREENSHOT_INTERVAL. thats it.
@@ -37,16 +43,33 @@ fn get_focused_pid() -> u32 {
     foreground_pid
 }
 
-// phashes img and checks against last img phash
-// returns true if they are too similar
-fn should_store_image(img: &DynamicImage) -> bool {
-    true
+impl Gaze {
+    // phashes img and checks against last img phash
+    // returns true if the new screenshot phash dist
+    // is great enough and it should be stored
+    pub fn should_store_image(&mut self, img: &DynamicImage) -> bool {
+        match self.last_screenshot_phash {
+            Some(ref last_phash) => {
+                let phash = phash(img, 8, 4).unwrap();
+                let distance = hdist(&phash, last_phash);
+
+                if distance > PHASH_DIST_THRESHOLD {
+                    self.last_screenshot_phash = Some(phash);
+                    true
+                } else {
+                    false
+                }
+            }
+            None => true,
+        }
+    }
 }
 
 // takes a screenshot of the first monitor (usually the primary monitor)
 // looks at the currently focused window name
 // runs OCR on the screenshot -> embeds the result -> stores the image and
 // inserts the embeddings + metadata into the vdb
+// this should be refactored at some point (its very large and bloated)
 async fn take_screenshot(gaze_state: GazeState) -> Result<(), Box<dyn std::error::Error>> {
     let monitors = Monitor::all()?;
     let windows = Window::all()?;
@@ -57,7 +80,11 @@ async fn take_screenshot(gaze_state: GazeState) -> Result<(), Box<dyn std::error
 
         let screenshot = image::DynamicImage::ImageRgba8(screenshot);
 
-        if !should_store_image(&screenshot) {
+        // i know that this is locking for a long time but for now we shouldnt be taking screenshots at the
+        // same time anyways so it shouldnt ever be a real issue
+        let mut state = gaze_state.lock().await;
+
+        if !state.should_store_image(&screenshot) {
             println!("phash too similar to last screenshot, will skip this frame");
             return Ok(());
         }
@@ -81,9 +108,7 @@ async fn take_screenshot(gaze_state: GazeState) -> Result<(), Box<dyn std::error
         })
         .await?;
 
-        let id = gaze_state
-            .lock()
-            .await
+        let id = state
             .store_embeddings(embeddings, &ocr_text, focused_window_title.as_str())
             .await?;
 

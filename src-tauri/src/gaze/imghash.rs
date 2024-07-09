@@ -63,3 +63,12 @@ pub fn phash(img: &DynamicImage, hs: usize, hff: usize) -> Result<Vec<u8>, &str>
 
     Ok(hash)
 }
+
+// distance between two hashes
+pub fn hdist(hash1: &[u8], hash2: &[u8]) -> usize {
+    hash1
+        .iter()
+        .zip(hash2.iter())
+        .filter(|(&a, &b)| a != b)
+        .count()
+}

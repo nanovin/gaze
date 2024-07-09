@@ -9,6 +9,7 @@ use vdb::init_vdb;
 use window_appearance::setup_window;
 
 pub mod embed;
+pub mod imghash;
 pub mod keybinds;
 pub mod ocr;
 pub mod screenshot;

@@ -37,6 +37,8 @@ arrow-schema = "51.0"
 candle-core = "0.6.0"
 imageproc = "0.25.0"
 futures = "0.3.30"
+ndarray = "0.15.3"
+ndarray-npy = "0.7.0"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!

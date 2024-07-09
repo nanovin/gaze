@@ -98,7 +98,7 @@ impl ScreenshotRow {
             .collect::<Vec<_>>()
     }
 
-    pub fn to_record_batch(&self, schema: Arc<Schema>) -> RecordBatch {
+    pub fn _to_record_batch(&self, schema: Arc<Schema>) -> RecordBatch {
         RecordBatch::try_new(
             schema,
             vec![

@@ -9,7 +9,7 @@ use std::time::{Duration, Instant};
 use tokio::task::spawn_blocking;
 use xcap::{Monitor, Window};
 
-const SCREENSHOT_INTERVAL: u64 = 90; // seconds
+const SCREENSHOT_INTERVAL: u64 = 10; // seconds
 const PHASH_DIST_THRESHOLD: usize = 10;
 
 // an future that sits in the event loop and calls take_screenshot
@@ -48,19 +48,20 @@ impl Gaze {
     // returns true if the new screenshot phash dist
     // is great enough and it should be stored
     pub fn should_store_image(&mut self, img: &DynamicImage) -> bool {
+        let phash = phash(img, 8, 4).unwrap();
         match self.last_screenshot_phash {
             Some(ref last_phash) => {
-                let phash = phash(img, 8, 4).unwrap();
-                let distance = hdist(&phash, last_phash);
-
-                if distance > PHASH_DIST_THRESHOLD {
+                if hdist(&phash, last_phash) > PHASH_DIST_THRESHOLD {
                     self.last_screenshot_phash = Some(phash);
                     true
                 } else {
                     false
                 }
             }
-            None => true,
+            None => {
+                self.last_screenshot_phash = Some(phash);
+                true
+            }
         }
     }
 }

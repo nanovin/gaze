@@ -9,20 +9,20 @@ pub fn apply_transparency(window: &Window) {
 
 #[cfg(target_os = "windows")]
 pub fn apply_transparency(window: &Window) {
-    apply_acrylic(window, Some((18, 18, 18, 125)))
+    apply_mica(window, Some(true))
         .expect("Unsupported platform! 'apply_blur' is only supported on Windows");
 }
 
 pub fn setup_window(window: &Window) {
     window.set_title("Search").unwrap();
     window.hide().unwrap();
-    apply_transparency(window);
+    // apply_transparency(window);
 
     // if its unfocused, hide the window
-    let window_copy = window.clone();
-    window.on_window_event(move |event| {
-        if let tauri::WindowEvent::Focused(false) = event {
-            window_copy.hide().unwrap();
-        }
-    });
+    // let window_copy = window.clone();
+    // window.on_window_event(move |event| {
+    //     if let tauri::WindowEvent::Focused(false) = event {
+    //         window_copy.hide().unwrap();
+    //     }
+    // });
 }

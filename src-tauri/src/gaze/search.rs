@@ -9,11 +9,12 @@ pub struct SearcResults(Vec<ScreenshotRow>);
 pub async fn vector_search(
     state: tauri::State<'_, GazeState>,
     query: String,
+    limit: usize,
 ) -> Result<SearcResults, String> {
     let state = state.lock().await;
     let embedded_query = async_embed_text(query).await.unwrap();
     let results = state
-        .search_embeddings(embedded_query, 10)
+        .search_embeddings(embedded_query, limit)
         .await
         .map_err(|e| e.to_string())?;
     Ok(SearcResults(results))

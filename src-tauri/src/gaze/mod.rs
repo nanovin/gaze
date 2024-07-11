@@ -22,14 +22,28 @@ pub mod window_appearance;
 pub async fn init_gaze() {
     let app_state: GazeState = Arc::new(Mutex::new(Gaze::default()));
 
-    init_vdb(app_state.clone()).await;
     init_screenshot_worker(app_state.clone());
 
+    let app_state_ref = app_state.clone();
     tauri::Builder::default()
-        .setup(|app| {
+        .setup(move |app| {
             let window = app.get_window("main").unwrap();
             setup_window(&window);
             setup_keybinds(app);
+
+            match app.path_resolver().app_data_dir() {
+                Some(path) => {
+                    Gaze::set_app_data_dir(app_state_ref.clone(), path);
+                }
+                None => {
+                    println!("Could not get app data dir");
+                }
+            };
+
+            // this might be a race condition im not sure... though the lock should save it?
+            // theres 100% a better way to be doing this i just want it to work for right now
+            tokio::spawn(init_vdb(app_state_ref));
+
             Ok(())
         })
         .manage(app_state)

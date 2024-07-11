@@ -247,7 +247,18 @@ impl Gaze {
 }
 
 pub async fn init_vdb(app_state: GazeState) {
-    let db = connect("../data/gazedb").execute().await.unwrap();
+    let mut gaze = app_state.lock().await;
+    let app_data_dir = gaze.app_data_dir.clone();
+
+    if app_data_dir.is_none() {
+        println!("Could not access vector database path");
+        return;
+    }
+
+    let db = connect(format!("{}/gazedb", app_data_dir.unwrap().to_str().unwrap()).as_str())
+        .execute()
+        .await
+        .unwrap();
 
     let schema = Arc::new(Schema::new(vec![
         Field::new("id", DataType::Int32, true),
@@ -269,8 +280,6 @@ pub async fn init_vdb(app_state: GazeState) {
             .await
             .unwrap(),
     };
-
-    let mut gaze = app_state.lock().await;
 
     gaze.schema = Some(schema);
     gaze.tbl = Some(tbl);

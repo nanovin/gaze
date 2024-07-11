@@ -18,6 +18,13 @@
       },
       "window": {
         "all": true
+      },
+      "protocol": {
+        "asset": true,
+        "assetScope": ["$APPDATA/screenshots/*"]
+      },
+      "path": {
+        "all": true
       }
     },
     "windows": [
@@ -40,7 +47,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "com.vin.gaze",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -51,3 +58,4 @@
     }
   }
 }
+

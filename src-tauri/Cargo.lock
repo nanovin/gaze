@@ -2472,6 +2472,7 @@ dependencies = [
  "image 0.25.1",
  "imageproc",
  "lancedb",
+ "lazy_static",
  "ndarray 0.15.6",
  "ndarray-npy",
  "rand 0.8.5",

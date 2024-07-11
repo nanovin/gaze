@@ -4,7 +4,8 @@ import { useSearchResultsStore } from "../lib/search.ts";
 function Result({ result }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="w-full h-32 rounded bg-black/10" />
+      <img src={result.url} className="w-full h-32 rounded bg-black/10" />
+
       <h1 className="text-xs truncate opacity-25">
         {result.focused_window_title}
       </h1>

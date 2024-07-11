@@ -7,6 +7,7 @@ export type SearchResult = {
   ocr_text: String;
   timestamp: number;
   focused_window_title: String;
+  url?: String;
 };
 
 export type SearchResults = Array<SearchResult>;

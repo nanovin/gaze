@@ -5,7 +5,10 @@ use super::{
     state::{Gaze, GazeState},
 };
 use image::DynamicImage;
-use std::time::{Duration, Instant};
+use std::{
+    sync::Arc,
+    time::{Duration, Instant},
+};
 use tokio::task::spawn_blocking;
 use xcap::{Monitor, Window};
 
@@ -90,6 +93,7 @@ async fn take_screenshot(gaze_state: GazeState) -> Result<(), Box<dyn std::error
             return Ok(());
         }
 
+        // grab what the user is currently looking at so we can chuck it into the vdb as well
         let focused_pid = get_focused_pid();
         let focused_window_title =
             if let Some(window) = windows.into_iter().find(|w| w.process_id() == focused_pid) {
@@ -100,8 +104,12 @@ async fn take_screenshot(gaze_state: GazeState) -> Result<(), Box<dyn std::error
 
         println!("Focused Window Title: {}", focused_window_title);
 
+        // OCR & Embedding is very blocking, but tauri is an async world so we have to thread it
+        // baby. this is a bit of a mess but it works for now
+        let screenshot = Arc::new(screenshot);
+        let s_ref = screenshot.clone();
         let (ocr_text, embeddings) = spawn_blocking(move || {
-            let ocr_text = image_to_text(&screenshot);
+            let ocr_text = image_to_text(s_ref.as_ref());
             println!("OCR Text: {}", ocr_text);
             let embeddings = embed_text(ocr_text.as_str()).unwrap();
             println!("Embeddings: {:?}", embeddings);
@@ -109,14 +117,26 @@ async fn take_screenshot(gaze_state: GazeState) -> Result<(), Box<dyn std::error
         })
         .await?;
 
+        // alas, the moment we have all been waiting for... storing the embeddings!
         let id = state
             .store_embeddings(embeddings, &ocr_text, focused_window_title.as_str())
             .await?;
 
         println!("Stored embeddings for id: {}", id);
 
-        // save image for reference
-        // dynamic_image.save(format!("../screenshots/{}.png", id).as_str())?;
+        // now lets save the image so we can see it later in the UI.
+        // im not sure it what contexts we wouldnt be able to get the app_data_dir but that would suck lol
+        match state.app_data_dir.clone() {
+            Some(dir) => {
+                let p = format!("{}/screenshots", dir.to_str().unwrap());
+                std::fs::create_dir_all(&p)?;
+                screenshot.save(format!("{}/{}.png", p, id))?;
+                println!("Saved screenshot to {}/{}.png", p, id);
+            }
+            None => {
+                println!("Could not get app data dir");
+            }
+        };
     }
 
     Ok(())
